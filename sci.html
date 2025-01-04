@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Science Quiz</title>
+    <style>
+        /* Reset styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #1e3c72, #2a5298);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            width: 90%;
+            max-width: 600px;
+            padding: 20px;
+            background-color: white;
+            color: #333;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #2a5298;
+            margin-bottom: 20px;
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        .answer {
+            background-color: #f9f9f9;
+            padding: 10px;
+            margin: 5px 0;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .answer:hover {
+            background-color: #e0e0e0;
+        }
+        .correct {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .incorrect {
+            background-color: #f44336;
+            color: white;
+        }
+        #result {
+            font-size: 20px;
+            margin-top: 20px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #2a5298;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #1e3c72;
+        }
+
+        /* Media Queries */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 15px;
+            }
+            .question {
+                font-size: 16px;
+            }
+            .answer {
+                font-size: 14px;
+            }
+            #result {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 24px;
+            }
+            .question {
+                font-size: 14px;
+            }
+            .answer {
+                font-size: 12px;
+            }
+            button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Science Quiz</h1>
+        <div id="quiz"></div>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "What planet is known as the Red Planet?",
+                answers: ["Earth", "Mars", "Jupiter", "Venus"],
+                correctAnswer: 1
+            },
+            {
+                question: "What is the boiling point of water?",
+                answers: ["50°C", "100°C", "150°C", "200°C"],
+                correctAnswer: 1
+            },
+            {
+                question: "What is the chemical symbol for water?",
+                answers: ["H2O", "O2", "CO2", "H2"],
+                correctAnswer: 0
+            },
+            {
+                question: "Which gas do plants absorb from the air for photosynthesis?",
+                answers: ["Oxygen", "Carbon Dioxide", "Nitrogen", "Hydrogen"],
+                correctAnswer: 1
+            },
+            {
+                question: "What is the largest organ in the human body?",
+                answers: ["Brain", "Heart", "Skin", "Liver"],
+                correctAnswer: 2
+            }
+        ];
+
+        let score = 0;
+        let currentQuestion = 0;
+
+        function displayQuestion() {
+            const quizDiv = document.getElementById('quiz');
+            const questionData = questions[currentQuestion];
+            quizDiv.innerHTML = `
+                <div class="question">
+                    ${currentQuestion + 1}. ${questionData.question}
+                </div>
+                ${questionData.answers.map((answer, index) => `
+                    <div class="answer" onclick="checkAnswer(${index})">${answer}</div>
+                `).join('')}
+            `;
+        }
+
+        function checkAnswer(selectedIndex) {
+            const correctAnswer = questions[currentQuestion].correctAnswer;
+            const answerElements = document.querySelectorAll('.answer');
+
+            // Highlight the correct answer
+            answerElements[correctAnswer].classList.add('correct');
+
+            // Highlight the selected answer
+            if (selectedIndex === correctAnswer) {
+                score++;
+                answerElements[selectedIndex].classList.add('correct');
+            } else {
+                answerElements[selectedIndex].classList.add('incorrect');
+            }
+
+            // Disable clicking on answers after selection
+            answerElements.forEach(element => element.style.pointerEvents = 'none');
+
+            // Move to the next question or show results
+            setTimeout(() => {
+                currentQuestion++;
+                if (currentQuestion < questions.length) {
+                    displayQuestion();
+                } else {
+                    showResult();
+                }
+            }, 1000);
+        }
+
+        function showResult() {
+            document.getElementById('quiz').innerHTML = '';
+            let message = score === questions.length ? "🎉 Perfect Score! You're a genius!" :
+                          score > questions.length / 2 ? "😊 Great job!" :
+                          "😅 Better luck next time!";
+            document.getElementById('result').innerHTML = `
+                You scored ${score} out of ${questions.length}!<br>
+                ${message}<br>
+                <button onclick="restartQuiz()">Restart Quiz</button>
+            `;
+        }
+
+        function restartQuiz() {
+            score = 0;
+            currentQuestion = 0;
+            displayQuestion();
+            document.getElementById('result').innerHTML = '';
+        }
+
+        // Start the quiz
+        displayQuestion();
+    </script>
+
+</body>
+</html>
+`
